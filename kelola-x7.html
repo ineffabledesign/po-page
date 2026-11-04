@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Admin – Ineffable Design</title>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<style>
+:root{--ink:#0a1a2b;--lcd:#46d6ff;--navy:#07131f;--line:#6f7b88}
+*{box-sizing:border-box}
+body{margin:0;font-family:Quicksand,sans-serif;color:var(--ink);background:linear-gradient(#a9ccf2,#e6f1fc 55%,#fff) fixed;min-height:100vh}
+body::before{content:"";position:fixed;inset:0;z-index:-1;opacity:.3;background:conic-gradient(#fff 25%,transparent 0 50%,#fff 0 75%,transparent 0) 0 0/28px 28px}
+.wrap{max-width:1040px;margin:0 auto;padding:14px}
+.win{border:2px solid var(--line);border-radius:14px;background:linear-gradient(#fff,#e3e8ee);box-shadow:0 5px 0 rgba(60,90,130,.18);overflow:hidden;margin-bottom:14px}
+.bar{display:flex;align-items:center;gap:6px;padding:5px 10px;background:linear-gradient(#cfe3f8,#9fc3ec);border-bottom:2px solid var(--line);font:20px VT323,monospace;color:#1d3550}
+.bar i{width:11px;height:11px;border-radius:50%;background:linear-gradient(#fff,#aab4bf);border:1.5px solid var(--line)}
+.bar span{margin-left:auto}
+.body{padding:14px;display:grid;gap:10px}
+label{display:grid;gap:3px;font-weight:700;font-size:14px}
+input,select,textarea{font:16px Quicksand,sans-serif;padding:9px 10px;border:2px solid var(--line);border-radius:10px;background:#fff;width:100%}
+.btn{font:21px VT323,monospace;padding:4px 16px;border:2px solid var(--line);border-radius:999px;background:linear-gradient(#fff,#c4ccd5);color:var(--ink);cursor:pointer;box-shadow:0 3px 0 #8d98a5}
+.btn.go{background:linear-gradient(#e8fbff,#7fd6f5)}.btn:active{transform:translateY(2px);box-shadow:0 1px 0 #8d98a5}
+.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible,.ord:focus-visible{outline:3px solid #2b8fd6;outline-offset:2px}
+.tag{background:#fff3b8;border:2px solid #c9a600;border-radius:10px;padding:6px 10px;font-size:13px;font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;background:var(--navy);padding:12px;font:22px VT323,monospace;color:var(--lcd);text-shadow:0 0 8px rgba(70,214,255,.7);text-align:center}
+.stats small{display:block;font-size:16px;opacity:.7}
+.tools{display:flex;gap:8px;flex-wrap:wrap;padding:12px 14px 0}
+.tools input{flex:1;min-width:160px}.tools select{width:auto}
+.list{display:grid;gap:8px;padding:12px 14px 14px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.ord{text-align:left;border:2px solid var(--line);border-radius:12px;background:#fff;padding:10px 12px;cursor:pointer;display:grid;gap:3px;font:inherit;color:inherit}
+.ord b{font-size:15px}.ord small{color:#52667c}
+.badge{justify-self:start;font:18px VT323,monospace;padding:0 10px;border-radius:999px;background:var(--navy);color:var(--lcd)}
+.empty{padding:20px;text-align:center;color:#52667c}
+dialog{border:2px solid var(--line);border-radius:14px;padding:0;width:min(560px,94vw);max-height:calc(100dvh - 24px);overflow:auto;background:#f3f7fb;color:var(--ink)}
+dialog::backdrop{background:rgba(20,50,90,.45)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sum{font-size:14px;border:2px dashed #9db4cc;border-radius:10px;padding:8px 10px;background:#fff}
+.sum div{display:flex;justify-content:space-between;gap:10px}
+.row{display:flex;justify-content:space-between;gap:8px}
+.note{font-size:13px;color:#52667c;margin:0}
+.proof{display:block;max-width:100%;max-height:260px;border:2px solid var(--line);border-radius:10px;object-fit:contain;background:#fff}
+@media(max-width:560px){.stats{grid-template-columns:repeat(3,1fr)}.two{grid-template-columns:1fr}.list{grid-template-columns:1fr}dialog{width:100vw;max-width:100vw;max-height:100dvh;margin:auto 0 0;border-radius:14px 14px 0 0}}
+.items{border:2px dashed #9db4cc;border-radius:10px;padding:8px 10px;background:#fff;display:grid;gap:6px}
+.it{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center;padding:4px 0;border-bottom:1px dashed #c3cfdc;font-size:14px}
+.st{display:flex;align-items:center;gap:6px}
+.sb{width:34px;height:34px;border-radius:50%;border:2px solid var(--line);background:linear-gradient(#fff,#c4ccd5);font:22px VT323,monospace;cursor:pointer;line-height:1}
+.sb.del{color:#b3261e}
+output{min-width:22px;text-align:center;font:22px VT323,monospace}
+.add{display:flex;gap:8px}.add select{flex:1}
+@media(max-width:560px){.it{grid-template-columns:1fr auto auto}.it>span:first-child{grid-column:1/-1;font-weight:700}}
+.all{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:700}
+.all input,.pick{width:22px;height:22px;padding:0;accent-color:#2b8fd6}
+.ordw{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center}
+.bulk{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));background:linear-gradient(#dbe8f6,#b9d2ee);border-top:2px solid var(--line);font:22px VT323,monospace}
+.bulk select{width:auto;flex:1;min-width:140px}
+#app{padding-bottom:84px}
+.rekap{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 14px 0;font-weight:700;font-size:14px}
+.rekap>div{flex-basis:100%}
+.rk{border:2px solid var(--line);border-radius:12px;background:#fff;padding:6px 12px;font:inherit;color:inherit;cursor:pointer;display:grid;text-align:left}
+.rk.on{background:var(--navy);color:var(--lcd)}.rk b{font:22px VT323,monospace}.rk small{font-weight:500;opacity:.8}
+.it.v{grid-template-columns:1fr auto;font-size:15px}
+.sum2{display:grid;gap:3px;font-size:14px;border:2px dashed #9db4cc;border-radius:10px;padding:8px 10px;background:#fff}
+.sum2 div{display:flex;justify-content:space-between;gap:10px}
+#printArea{display:none}
+@media(max-width:560px){.it.v>span:first-child{grid-column:auto;font-weight:500}}
+@media print{body>*:not(#printArea){display:none!important}body::before{display:none}#printArea{display:block;font:14px Arial,sans-serif;color:#000}#printArea table{border-collapse:collapse;width:100%}#printArea td,#printArea th{border:1px solid #000;padding:4px 6px;text-align:left}}
+[hidden]{display:none!important}
+
+/* ===== TEMA: dreamy pastel (dari gaya artwork Risa) ===== */
+:root{--ink:#3d3560;--pink:#f08cb8;--pink2:#f9cfe2;--lav:#cdbdf0;--butter:#fff6cf;--line:#c8b8ea}
+body{font-family:Quicksand,sans-serif;color:var(--ink);background:radial-gradient(55% 38% at 8% 6%,#ead9f7,transparent 70%),radial-gradient(50% 36% at 95% 28%,#fbd9e8,transparent 70%),radial-gradient(60% 40% at 25% 95%,#fff3c4,transparent 70%),linear-gradient(#c7d4f3,#e3def6) fixed}
+body::before{background:radial-gradient(rgba(255,255,255,.85) 3px,transparent 3.6px) 0 0/38px 38px;opacity:.45}
+.win,dialog{border:3px solid #fff;border-radius:22px;background:#fffdfb;box-shadow:0 0 0 2px var(--line),0 12px 26px rgba(120,100,180,.22)}
+dialog{background:#fbf8ff}
+.bar{background:linear-gradient(90deg,#f8d3e4,#dccff6,#cfdef8);border-bottom:2px solid #fff;color:var(--ink);font-family:Gaegu,cursive;font-size:21px;font-weight:700}
+.bar i{border:2px solid #fff;box-shadow:0 0 0 1px var(--line)}
+.bar i:nth-child(1){background:#f19ac0}.bar i:nth-child(2){background:#f7df86}.bar i:nth-child(3){background:#9bbbe8}
+.btn,.sb,.step button,.step output,.price,.sec,h1,.lcd,.lr,.stats,.dock,.bulk,.start,.badge,.rk b,output,.pic,.steps li::before{font-family:Gaegu,cursive}
+.btn{background:#fff;border:2.5px solid var(--line);color:var(--ink);box-shadow:0 3px 0 #b9a9de;font-size:22px;font-weight:700;padding:5px 20px}
+.btn.go{background:linear-gradient(#ffd6e8,#f59cc4);border:2.5px solid #fff;box-shadow:0 0 0 2px var(--pink),0 5px 0 #d1709f;color:#5a2745}
+h1{font-weight:700;letter-spacing:1px;line-height:1;color:var(--pink);font-size:clamp(44px,12vw,72px);text-shadow:3px 3px 0 #fff,-3px 3px 0 #fff,3px -3px 0 #fff,-3px -3px 0 #fff,0 7px 0 var(--lav)}
+.hero p{color:#7a6aa8;font-size:17px}
+.spark{font-size:26px;letter-spacing:.7em;color:var(--pink);animation:tw 3s ease-in-out infinite}
+@keyframes tw{50%{opacity:.5;transform:scale(.94)}}
+.sec{color:var(--ink);font-size:34px;font-weight:700}
+.lcd{background:var(--butter);color:var(--ink);text-shadow:none;border-top:2px dashed #f4b6d0;font-size:23px}
+.oc .lcd{border:2px dashed #f4b6d0;border-radius:14px}
+.lr b{color:var(--pink);font-weight:700;opacity:1}
+.lr{animation:rise .6s both;animation-delay:calc(var(--i) * .12s)}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.how div{border:2.5px solid #fff;box-shadow:0 0 0 2px var(--line);background:#fffdfb;border-radius:18px}
+.prog{border:2px solid var(--line);background:#fff}
+.prog i{background:repeating-linear-gradient(90deg,#f19ac0 0 8px,#f9cfe2 8px 10px)}
+.pic{background:#f3eefc;border-bottom:2px dashed var(--line);color:#a898d4}
+.price{color:#d6679a;font-size:28px;font-weight:700}
+.step button{background:#fff;border:2px solid var(--line);color:var(--pink)}
+.info p,.note,.empty{color:#7a6aa8}
+.dock,.bulk{background:rgba(255,253,251,.92);backdrop-filter:blur(6px);border-top:3px solid #fff;box-shadow:0 -4px 18px rgba(120,100,180,.2);font-size:24px;font-weight:700}
+.start{background:var(--pink2);border:2px solid #fff;box-shadow:0 0 0 2px var(--pink)}
+#clock{display:none}
+input,select,textarea{border:2.5px solid var(--line);border-radius:14px;background:#fff;color:var(--ink)}
+:focus-visible{outline:3px solid var(--pink)!important;outline-offset:2px}
+.sum,.sum2,.items{border-color:var(--line);background:#fff}
+.qris{border:2.5px solid var(--line);border-radius:16px}
+summary::before{color:var(--pink)}details{border-top:2px dashed var(--line)}details p{color:#7a6aa8}
+.cek a,a.back{color:#d6679a}
+.steps li{border-color:#e4daf5;color:#a99bd1;border-radius:14px}
+.steps li.done{color:var(--ink);border-color:var(--line)}.steps li.done::before{color:var(--pink)}
+.steps li.now{background:var(--pink2);color:#5a2745;border-color:var(--pink);text-shadow:none}
+.stats{background:#ece6fa;color:var(--ink);text-shadow:none}
+.badge{background:var(--pink2);color:#5a2745}
+.ord,.rk{border:2.5px solid var(--line);border-radius:18px}
+.rk.on{background:var(--pink2);color:#5a2745;border-color:var(--pink)}
+.tag{background:#fff6cf;border-color:#e9c95b}
+@media(pointer:fine){body{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cpath d='M13 2l3.1 7 7.4.7-5.6 4.9 1.7 7.3L13 18l-6.6 3.9 1.7-7.3L2.5 9.7l7.4-.7z' fill='%23f6a6c9' stroke='%23fff' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E") 13 13,auto}.btn,button,summary,label,input{cursor:pointer}}
+.fth{width:18px;height:18px;border-radius:0;box-shadow:none;background:#fff;opacity:.9;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.fth[data-c="0"]{background:#f9b6d3}.fth[data-c="2"]{background:#fff3b0}.fth[data-c="3"]{background:#cbbcf2}
+@media(max-width:560px){dialog{border-radius:22px 22px 0 0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section class="win" id="login" hidden style="max-width:420px;margin:40px auto">
+    <div class="bar"><i></i><i></i><i></i><span>login ♡</span></div>
+    <div class="body">
+      <label>Email admin<input id="lemail" type="email" autocomplete="username"></label>
+      <label>Password<input id="lpass" type="password" autocomplete="current-password"></label>
+      <button class="btn go" id="lgo">Masuk</button>
+      <p class="note" id="lmsg" role="status"></p>
+    </div>
+  </section>
+
+  <div id="app" hidden>
+    <section class="win">
+      <div class="bar"><i></i><i></i><i></i><span>kelola order ✦</span></div>
+      <div class="stats" id="stats"></div>
+      <div class="rekap" id="rekap"></div>
+      <div class="body" id="demoTag" hidden><div class="tag">Mode demo: ini data contoh, belum tersambung ke Supabase. Perubahan hilang kalau halaman di-refresh.</div></div>
+      <div class="tools">
+        <input id="q" placeholder="Cari nama, IG/LINE, email, atau nomor order…" aria-label="Cari order">
+        <select id="fs" aria-label="Filter status"></select>
+        <label class="all"><input type="checkbox" id="all"> Pilih semua</label>
+        <button class="btn" id="prn">Cetak</button>
+        <button class="btn" id="csv">Export</button>
+        <button class="btn" id="out">Keluar</button>
+      </div>
+      <div class="list" id="list"></div>
+    </section>
+  </div>
+</div>
+<div class="bulk" id="bulk" hidden>
+  <span id="selN"></span>
+  <select id="bStatus" aria-label="Status baru"></select>
+  <button class="btn go" id="bGo">Ubah status</button>
+  <button class="btn" id="bClear">Batal</button>
+</div>
+
+<dialog id="dlg">
+  <div class="bar"><i></i><i></i><i></i><span id="dTitle">order ♡</span></div>
+  <div class="body" id="vView"></div>
+  <div class="body" id="vEdit" hidden>
+    <div class="items"><div id="dItems"></div><div class="add"><select id="addSel" aria-label="Tambah produk"></select><button class="btn" id="addBtn" type="button">+ Tambah</button></div></div>
+    <div id="dProof"></div>
+    <div class="two"><label>Nama<input id="e_nama"></label><label>IG / LINE<input id="e_kontak"></label></div>
+    <label>Email<input id="e_email" type="email"></label>
+    <div class="two"><label>Total (Rp)<input id="e_total" type="number" min="0"></label><label>Nominal dibayar (Rp)<input id="e_bayar" type="number" min="0"></label></div>
+    <label>Status<select id="e_status"></select></label>
+    <label>Catatan (cuma kamu yang lihat)<textarea id="e_catatan" rows="2"></textarea></label>
+    <div class="row"><button class="btn" id="dClose">Tutup</button><button class="btn go" id="dSave">Simpan</button></div>
+    <p class="note" id="dMsg" role="status"></p>
+  </div>
+</dialog>
+
+<script src="products.js"></script>
+<script>
+const PRODS=typeof PRODUCTS!=="undefined"?PRODUCTS:[];
+// ===== Isi nanti setelah Supabase jadi. Kosong = mode demo =====
+const SB_URL="",SB_KEY="";
+// ===============================================================
+const DEMO=!SB_URL,sb=DEMO?null:supabase.createClient(SB_URL,SB_KEY);
+const ST=[["pending","Menunggu dicek"],["dp_masuk","Pembayaran masuk"],["confirmed","Dikonfirmasi"],["cek_shopee","Cek Shopee"],["done","Selesai"]];
+const $=id=>document.getElementById(id),rp=n=>"Rp "+Number(n||0).toLocaleString("id-ID");
+const esc=t=>String(t??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const safeUrl=u=>/^https:\/\//i.test(u||"")?u:"";
+const label=s=>(ST.find(x=>x[0]===s)||[0,s])[1];
+let rows=[],cur=null,wi=[],sel=new Set(),shown=[],pf="all",lastOut=[],lastTot={};
+
+const DEMO_ROWS=[
+ {id:1,nama:"Kak Demo",kontak:"@demo.ig",email:"demo@mail.com",items:[{name:"Produk Contoh 1",qty:2,price:25000},{name:"Produk Contoh 3",qty:1,price:45000}],total:95000,nominal_bayar:50000,bukti_url:"",status:"dp_masuk",catatan:"",created_at:"2026-11-04T09:10:00Z"},
+ {id:2,nama:"Mina",kontak:"mina_line",email:"mina@mail.com",items:[{name:"Produk Contoh 2",qty:1,price:35000}],total:35000,nominal_bayar:35000,bukti_url:"",status:"pending",catatan:"",created_at:"2026-11-04T10:30:00Z"},
+ {id:3,nama:"Sana",kontak:"@sana.s",email:"sana@mail.com",items:[{name:"Produk Contoh 4",qty:3,price:55000}],total:165000,nominal_bayar:80000,bukti_url:"",status:"cek_shopee",catatan:"minta kirim cepat",created_at:"2026-11-03T14:00:00Z"}
+];
+
+async function boot(){
+  $("fs").innerHTML='<option value="all">Semua status</option>'+ST.map(s=>`<option value="${s[0]}">${s[1]}</option>`).join("");
+  $("bStatus").innerHTML=ST.map(s=>`<option value="${s[0]}">${s[1]}</option>`).join("");
+  $("e_status").innerHTML=ST.map(s=>`<option value="${s[0]}">${s[1]}</option>`).join("");
+  if(DEMO){$("demoTag").hidden=false;return enter()}
+  const {data}=await sb.auth.getSession();
+  data.session?enter():($("login").hidden=false);
+}
+async function enter(){
+  $("login").hidden=true;$("app").hidden=false;
+  if(DEMO)rows=DEMO_ROWS;
+  else{const {data,error}=await sb.from("orders").select("*").order("created_at",{ascending:false});
+    if(error){$("list").innerHTML='<p class="empty">Gagal memuat order. Kamu login sebagai admin?</p>';return}rows=data}
+  draw();
+}
+$("lgo").onclick=async()=>{
+  $("lmsg").textContent="Masuk…";
+  const {error}=await sb.auth.signInWithPassword({email:$("lemail").value.trim(),password:$("lpass").value});
+  if(error){$("lmsg").textContent="Email atau password salah.";return}
+  $("lpass").value="";enter();
+};
+$("out").onclick=async()=>{if(!DEMO)await sb.auth.signOut();location.reload()};
+
+function draw(){
+  $("stats").innerHTML=ST.map(s=>`<div>${rows.filter(r=>r.status===s[0]).length}<small>${s[1]}</small></div>`).join("");
+  const f=$("fs").value,q=$("q").value.trim().toLowerCase();
+  const base=rows.filter(r=>(f==="all"||r.status===f)&&(!q||[r.nama,r.kontak,r.email,"#"+r.id].join(" ").toLowerCase().includes(q)));
+  const tot={};base.forEach(r=>(r.items||[]).forEach(x=>{const t=tot[x.name]||(tot[x.name]={pcs:0,ord:0});t.pcs+=Number(x.qty);t.ord++}));
+  if(pf!=="all"&&!tot[pf])pf="all";
+  const out=pf==="all"?base:base.filter(r=>(r.items||[]).some(x=>x.name===pf));
+  $("rekap").innerHTML=`<div>${base.length} order · ${Object.values(tot).reduce((s,t)=>s+t.pcs,0)} pcs. Tap produk buat lihat siapa aja yang beli.</div>`+Object.entries(tot).map(([n,t])=>`<button class="rk${n===pf?" on":""}" data-n="${esc(n)}">${esc(n)}<b>${t.pcs} pcs</b><small>${t.ord} order</small></button>`).join("");
+  shown=out;lastOut=out;lastTot=tot;
+  $("list").innerHTML=out.length?out.map(r=>`<div class="ordw"><input type="checkbox" class="pick" data-id="${r.id}" aria-label="Pilih order ${r.id}" ${sel.has(String(r.id))?"checked":""}><button class="ord" data-id="${r.id}"><b>#${r.id} · ${esc(r.nama)}</b><small>${esc(r.kontak)} · ${esc(r.email)}</small><small>${(r.items||[]).map(x=>esc(x.name)+" ×"+Number(x.qty)).join(", ")}</small><small>${rp(r.nominal_bayar)} dari ${rp(r.total)}</small><span class="badge">${esc(label(r.status))}</span></button></div>`).join(""):'<p class="empty">Belum ada order yang cocok.</p>';
+  bulkUI();
+}
+function bulkUI(){
+  $("bulk").hidden=!sel.size;$("selN").textContent=sel.size+" dipilih";
+  $("all").checked=shown.length>0&&shown.every(r=>sel.has(String(r.id)));
+}
+$("list").onchange=e=>{const c=e.target.closest(".pick");if(!c)return;c.checked?sel.add(c.dataset.id):sel.delete(c.dataset.id);bulkUI()};
+$("all").onchange=()=>{shown.forEach(r=>$("all").checked?sel.add(String(r.id)):sel.delete(String(r.id)));draw()};
+$("bClear").onclick=()=>{sel.clear();draw()};
+$("bGo").onclick=async()=>{
+  const st=$("bStatus").value,ids=rows.filter(r=>sel.has(String(r.id))).map(r=>r.id);
+  if(!ids.length||!confirm(`Ubah status ${ids.length} order jadi "${label(st)}"?`))return;
+  if(!DEMO){const {error}=await sb.from("orders").update({status:st}).in("id",ids);if(error){alert("Gagal menyimpan. Coba lagi.");return}}
+  rows.forEach(r=>{if(sel.has(String(r.id)))r.status=st});sel.clear();draw();
+};
+$("q").oninput=draw;$("fs").onchange=draw;
+$("list").onclick=e=>{const b=e.target.closest(".ord");if(!b)return;open(rows.find(r=>String(r.id)===b.dataset.id))};
+
+function open(r){
+  cur=r;$("dMsg").textContent="";$("dTitle").textContent="Order #"+r.id;
+  wi=JSON.parse(JSON.stringify(r.items||[]));
+  const u=safeUrl(r.bukti_url);
+  $("dProof").innerHTML=u?`<a href="${esc(u)}" target="_blank" rel="noopener noreferrer"><img class="proof" src="${esc(u)}" alt="Bukti bayar" onerror="this.replaceWith(document.createTextNode('Buka bukti bayar'))"></a>`:'<p class="note">Belum ada bukti bayar (demo).</p>';
+  $("e_nama").value=r.nama||"";$("e_kontak").value=r.kontak||"";$("e_email").value=r.email||"";
+  $("e_total").value=r.total;$("e_bayar").value=r.nominal_bayar;$("e_status").value=r.status;
+  $("e_catatan").value=r.catatan||"";
+  drawItems(false);fillView(r);toggle(false);$("dlg").showModal();
+}
+$("addSel").innerHTML=PRODS.map(p=>`<option value="${p.id}">${esc(p.name)} (${rp(p.price)})</option>`).join("");
+function drawItems(recalc){
+  $("dItems").innerHTML=wi.map((x,i)=>`<div class="it"><span>${esc(x.name)}</span><span class="st"><button type="button" class="sb" data-i="${i}" data-d="-1" aria-label="Kurangi ${esc(x.name)}">−</button><output>${Number(x.qty)}</output><button type="button" class="sb" data-i="${i}" data-d="1" aria-label="Tambah ${esc(x.name)}">+</button></span><span>${rp(x.price*x.qty)}</span><button type="button" class="sb del" data-i="${i}" data-d="x" aria-label="Hapus ${esc(x.name)}">✕</button></div>`).join("")||'<p class="note">Belum ada item.</p>';
+  if(recalc)$("e_total").value=wi.reduce((s,x)=>s+x.price*x.qty,0);
+}
+$("dItems").onclick=e=>{
+  const b=e.target.closest(".sb");if(!b)return;const i=Number(b.dataset.i);
+  if(b.dataset.d==="x")wi.splice(i,1);else wi[i].qty=Math.max(1,wi[i].qty+Number(b.dataset.d));
+  drawItems(true);
+};
+$("addBtn").onclick=()=>{
+  const p=PRODS.find(x=>x.id===$("addSel").value);if(!p)return;
+  const ex=wi.find(x=>x.id===p.id||x.name===p.name);
+  if(ex)ex.qty++;else wi.push({id:p.id,name:p.name,price:p.price,qty:1});
+  drawItems(true);
+};
+$("dClose").onclick=()=>toggle(false);
+function toggle(edit){$("vView").hidden=edit;$("vEdit").hidden=!edit}
+function fillView(r){
+  const u=safeUrl(r.bukti_url),n=(r.items||[]).reduce((s,x)=>s+Number(x.qty),0);
+  $("vView").innerHTML=`<div class="items">${(r.items||[]).map(x=>`<div class="it v"><span>${esc(x.name)}</span><b>×${Number(x.qty)}</b></div>`).join("")}<div class="it v"><span>Total barang</span><b>${n} pcs</b></div></div>
+  <div class="sum2"><div><b>${esc(r.nama)}</b></div><div>${esc(r.kontak)}</div><div>${esc(r.email)}</div></div>
+  <div class="sum2"><div><span>Total</span><b>${rp(r.total)}</b></div><div><span>Dibayar</span><span>${rp(r.nominal_bayar)}</span></div><div><span>Status</span><span class="badge">${esc(label(r.status))}</span></div></div>
+  ${r.catatan?`<p class="note">Catatan: ${esc(r.catatan)}</p>`:""}
+  ${u?`<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">Buka bukti bayar</a>`:'<p class="note">Belum ada bukti bayar.</p>'}
+  <button class="btn" data-act="copy">Salin pesan buat DM</button>
+  <div class="row"><button class="btn" data-act="close">Tutup</button><button class="btn go" data-act="edit">✎ Edit</button></div>`;
+}
+$("vView").onclick=async e=>{
+  const b=e.target.closest("[data-act]");if(!b)return;
+  if(b.dataset.act==="edit")return toggle(true);
+  if(b.dataset.act==="copy"){
+    const T=typeof TEMPLATES!=="undefined"?TEMPLATES:{},t=(T[cur.status]||"Hai kak {nama}! Soal order #{id}: ").replace(/\{nama\}/g,cur.nama).replace(/\{id\}/g,cur.id);
+    try{await navigator.clipboard.writeText(t);b.textContent="Tersalin ✓"}catch(_){prompt("Salin pesan ini:",t)}
+    return;
+  }
+  $("dlg").close();
+};
+$("csv").onclick=()=>{
+  const cell=v=>{v=String(v??"");if(/^[=+\-@]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"'};
+  const head=["no","nama","ig_line","email","status","total","dibayar","isi_order","catatan","dibuat"];
+  const body=lastOut.map(r=>[r.id,r.nama,r.kontak,r.email,label(r.status),r.total,r.nominal_bayar,(r.items||[]).map(x=>x.name+" x"+x.qty).join("; "),r.catatan,r.created_at].map(cell).join(","));
+  const url=URL.createObjectURL(new Blob(["\ufeff"+[head.join(","),...body].join("\r\n")],{type:"text/csv;charset=utf-8"}));
+  const a=document.createElement("a");a.href=url;a.download="order-ineffable-design.csv";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+};
+$("rekap").onclick=e=>{const b=e.target.closest(".rk");if(!b)return;pf=pf===b.dataset.n?"all":b.dataset.n;draw()};
+$("prn").onclick=()=>{
+  const fsv=$("fs").value,all=pf==="all";
+  let h=`<h2>Rekap order${fsv!=="all"?" · "+esc(label(fsv)):""}${all?"":" · "+esc(pf)}</h2><p>${lastOut.length} order</p>`;
+  if(all)h+=`<table><tr><th>Produk</th><th>Pcs</th></tr>${Object.entries(lastTot).map(([n,t])=>`<tr><td>${esc(n)}</td><td>${t.pcs}</td></tr>`).join("")}</table><br>`;
+  h+=`<table><tr><th>#</th><th>Nama</th><th>IG/LINE</th><th>${all?"Isi order":"Jumlah"}</th></tr>${lastOut.map(r=>`<tr><td>${r.id}</td><td>${esc(r.nama)}</td><td>${esc(r.kontak)}</td><td>${all?(r.items||[]).map(x=>esc(x.name)+" ×"+Number(x.qty)).join(", "):(r.items||[]).filter(x=>x.name===pf).reduce((s,x)=>s+Number(x.qty),0)+" pcs"}</td></tr>`).join("")}</table>`;
+  if(!all)h+=`<p><b>Total: ${lastTot[pf].pcs} pcs</b></p>`;
+  $("printArea").innerHTML=h;window.print();
+};
+$("dSave").onclick=async()=>{
+  const patch={nama:$("e_nama").value.trim(),kontak:$("e_kontak").value.trim(),email:$("e_email").value.trim(),total:Number($("e_total").value)||0,nominal_bayar:Number($("e_bayar").value)||0,items:wi,status:$("e_status").value,catatan:$("e_catatan").value.trim()};
+  $("dMsg").textContent="Menyimpan…";
+  if(!DEMO){const {error}=await sb.from("orders").update(patch).eq("id",cur.id);if(error){$("dMsg").textContent="Gagal menyimpan. Coba lagi.";return}}
+  Object.assign(cur,patch);draw();fillView(cur);toggle(false);
+};
+boot().catch(()=>{$("login").hidden=false;$("lmsg").textContent="Halaman gagal dimuat. Refresh dulu ya."});
+</script>
+<div id="printArea"></div>
+</body>
+</html>

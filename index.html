@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ineffable Design – Pre-Order</title>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0a1a2b;--lcd:#46d6ff;--navy:#07131f;--line:#6f7b88;--sky:#a9ccf2}
+*{box-sizing:border-box}
+body{margin:0;font-family:Quicksand,sans-serif;color:var(--ink);background:linear-gradient(#a9ccf2,#e6f1fc 55%,#fff) fixed;min-height:100vh;padding-bottom:90px}
+body::before{content:"";position:fixed;inset:0;z-index:-1;opacity:.3;background:conic-gradient(#fff 25%,transparent 0 50%,#fff 0 75%,transparent 0) 0 0/28px 28px}
+.wrap{max-width:1040px;margin:0 auto;padding:16px;position:relative;z-index:1}
+.win{border:2px solid var(--line);border-radius:14px;background:linear-gradient(#fff,#e3e8ee);box-shadow:0 5px 0 rgba(60,90,130,.18);overflow:hidden}
+.bar{display:flex;align-items:center;gap:6px;padding:5px 10px;background:linear-gradient(#cfe3f8,#9fc3ec);border-bottom:2px solid var(--line);font:20px VT323,monospace;color:#1d3550}
+.bar i{width:11px;height:11px;border-radius:50%;background:linear-gradient(#fff,#aab4bf);border:1.5px solid var(--line)}
+.bar span{margin-left:auto}
+.btn{font:22px VT323,monospace;padding:4px 18px;border:2px solid var(--line);border-radius:999px;background:linear-gradient(#fff,#c4ccd5);color:var(--ink);cursor:pointer;box-shadow:0 3px 0 #8d98a5}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 #8d98a5}
+.btn.go{background:linear-gradient(#e8fbff,#7fd6f5)}
+.btn:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #2b8fd6;outline-offset:2px}
+.hero{text-align:center;padding:18px 12px 8px}
+.hero svg{width:min(260px,70%);height:auto}
+h1{margin:4px 0 2px;font:clamp(44px,11vw,76px)/.95 VT323,monospace;letter-spacing:2px;color:#8f99a4;text-shadow:0 2px 0 #fff,0 -1px 0 #6f7b88}
+.hero p{margin:0 0 14px;font-weight:700;color:#3a5675}
+.lcd{background:var(--navy);color:var(--lcd);font:22px VT323,monospace;padding:14px 16px;text-shadow:0 0 8px rgba(70,214,255,.7);display:grid;grid-template-columns:auto 1fr;gap:2px 18px;text-align:left}
+.lcd b{font-weight:400;opacity:.65}
+.sec{margin:18px 0 8px;font:30px VT323,monospace;color:#2b4a6b}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.pic{aspect-ratio:1;background:conic-gradient(#fff 25%,#e4edf7 0 50%,#fff 0 75%,#e4edf7 0) 0 0/20px 20px;display:grid;place-items:center;font:26px VT323,monospace;color:#8aa3bd;border-bottom:2px solid var(--line)}
+.pic img{width:100%;height:100%;object-fit:cover;display:block}
+.info{padding:10px 12px 14px}
+.info h3{margin:0;font-size:17px}
+.info p{margin:2px 0 8px;font-size:14px;color:#52667c}
+.row{display:flex;align-items:center;justify-content:space-between}
+.price{font:26px VT323,monospace;color:#1f6fa8}
+.step{display:flex;align-items:center;gap:8px}
+.step button{width:32px;height:32px;border-radius:50%;border:2px solid var(--line);background:linear-gradient(#fff,#c4ccd5);font:22px VT323,monospace;cursor:pointer;line-height:1}
+.step output{min-width:20px;text-align:center;font:24px VT323,monospace}
+.dock{position:fixed;left:0;right:0;bottom:0;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));background:linear-gradient(#dbe8f6,#b9d2ee);border-top:2px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;font:24px VT323,monospace;z-index:5}
+.cek{text-align:center;margin:22px 0 6px}
+.cek a{color:#1f6fa8;font-weight:700}
+dialog{border:2px solid var(--line);border-radius:14px;padding:0;width:min(520px,94vw);max-height:92vh;background:#f3f7fb;color:var(--ink)}
+dialog::backdrop{background:rgba(20,50,90,.45)}
+.body{padding:14px;display:grid;gap:10px}
+label{display:grid;gap:3px;font-weight:700;font-size:14px}
+input{font:16px Quicksand,sans-serif;padding:9px 10px;border:2px solid var(--line);border-radius:10px;background:#fff}
+.sum{font-size:14px;border:2px dashed #9db4cc;border-radius:10px;padding:8px 10px;background:#fff}
+.sum div{display:flex;justify-content:space-between}
+.qris{display:grid;place-items:center;border:2px solid var(--line);border-radius:12px;background:#fff;padding:8px;min-height:140px;text-align:center;font-size:14px}
+.qris img{max-width:100%;max-height:300px}
+.note{font-size:13px;color:#52667c;margin:0}
+
+/* wing cursor (mouse only) */
+@media(pointer:fine){body{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='26'%3E%3Cg fill='%23fff' stroke='%233b3f45' stroke-width='2' stroke-linejoin='round'%3E%3Cpolygon points='2,3 14,10 14,21 8,17'/%3E%3Cpolygon points='30,3 18,10 18,21 24,17'/%3E%3Cellipse cx='16' cy='4' rx='6' ry='2' fill='none'/%3E%3C/g%3E%3C/svg%3E") 16 4,auto}.btn,button,summary,label,input{cursor:pointer}}
+/* falling feathers */
+.fth{position:fixed;top:-60px;width:14px;height:36px;border-radius:50% 50% 50% 50%/70% 70% 30% 30%;background:linear-gradient(#fff,#d9e7f6);box-shadow:0 0 6px #fff;opacity:.85;pointer-events:none;z-index:0;animation:fall var(--d) linear var(--w) infinite}
+@keyframes fall{0%{transform:translate(0,0) rotate(var(--r))}50%{transform:translate(var(--x),55vh) rotate(calc(var(--r) * -1))}100%{transform:translate(0,115vh) rotate(var(--r))}}
+/* boot-up LCD */
+.lcd{display:block}
+.lr{display:grid;grid-template-columns:116px 1fr;gap:0 14px;animation:boot .5s steps(14) both;animation-delay:calc(var(--i) * .45s)}
+@keyframes boot{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0)}}
+/* how to */
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.how div{padding:10px 12px;border:2px solid var(--line);border-radius:12px;background:linear-gradient(#fff,#e9eef4)}
+.how b{display:block;font-size:15px}
+.how small{display:block;margin-top:2px;font-size:13px;color:#52667c}
+.prog{display:block;height:12px;border:2px solid var(--line);border-radius:6px;background:#fff;margin-bottom:8px;overflow:hidden}
+.prog i{display:block;height:100%;background:repeating-linear-gradient(90deg,#46d6ff 0 8px,#bfefff 8px 10px)}
+/* faq */
+details{border-top:2px dashed #9db4cc;padding:10px 14px}
+summary{font-weight:700;list-style:none}
+summary::before{content:"▸ ";color:#1f6fa8}
+details[open] summary::before{content:"▾ "}
+details p{margin:6px 0 0;font-size:14px;color:#41566d}
+/* taskbar */
+.dock{font-size:22px}
+.start{font:22px VT323,monospace;padding:2px 14px;border:2px solid var(--line);border-radius:999px;background:linear-gradient(#fff,#c4ccd5)}
+#dockInfo{flex:1;text-align:right}
+#clock{padding:2px 10px;border-radius:8px;background:var(--navy);color:var(--lcd);text-shadow:0 0 6px rgba(70,214,255,.7)}
+/* dialog on small screens */
+dialog{max-height:calc(100dvh - 24px);overflow:auto;overscroll-behavior:contain}
+/* phone */
+@media(max-width:560px){
+ .wrap{padding:10px}
+ .grid{grid-template-columns:repeat(2,1fr);gap:10px}
+ .info{padding:8px 9px 12px}.info h3{font-size:15px}.info p{font-size:13px}
+ .info .row{flex-wrap:wrap;gap:6px}.price{font-size:22px}
+ .step button{width:38px;height:38px}
+ .how{grid-template-columns:1fr}
+ .lr{grid-template-columns:96px 1fr;font-size:20px}
+ .start,#clock{display:none}
+ dialog{width:100vw;max-width:100vw;max-height:100dvh;border-radius:14px 14px 0 0;margin:auto 0 0}
+}
+@media(min-width:561px) and (max-width:1024px){.step button{width:36px;height:36px}}
+@media(prefers-reduced-motion:reduce){.fth{display:none}.lr{animation:none}}
+[hidden]{display:none!important}
+
+/* ===== TEMA: dreamy pastel (dari gaya artwork Risa) ===== */
+:root{--ink:#3d3560;--pink:#f08cb8;--pink2:#f9cfe2;--lav:#cdbdf0;--butter:#fff6cf;--line:#c8b8ea}
+body{font-family:Quicksand,sans-serif;color:var(--ink);background:radial-gradient(55% 38% at 8% 6%,#ead9f7,transparent 70%),radial-gradient(50% 36% at 95% 28%,#fbd9e8,transparent 70%),radial-gradient(60% 40% at 25% 95%,#fff3c4,transparent 70%),linear-gradient(#c7d4f3,#e3def6) fixed}
+body::before{background:radial-gradient(rgba(255,255,255,.85) 3px,transparent 3.6px) 0 0/38px 38px;opacity:.45}
+.win,dialog{border:3px solid #fff;border-radius:22px;background:#fffdfb;box-shadow:0 0 0 2px var(--line),0 12px 26px rgba(120,100,180,.22)}
+dialog{background:#fbf8ff}
+.bar{background:linear-gradient(90deg,#f8d3e4,#dccff6,#cfdef8);border-bottom:2px solid #fff;color:var(--ink);font-family:Gaegu,cursive;font-size:21px;font-weight:700}
+.bar i{border:2px solid #fff;box-shadow:0 0 0 1px var(--line)}
+.bar i:nth-child(1){background:#f19ac0}.bar i:nth-child(2){background:#f7df86}.bar i:nth-child(3){background:#9bbbe8}
+.btn,.sb,.step button,.step output,.price,.sec,h1,.lcd,.lr,.stats,.dock,.bulk,.start,.badge,.rk b,output,.pic,.steps li::before{font-family:Gaegu,cursive}
+.btn{background:#fff;border:2.5px solid var(--line);color:var(--ink);box-shadow:0 3px 0 #b9a9de;font-size:22px;font-weight:700;padding:5px 20px}
+.btn.go{background:linear-gradient(#ffd6e8,#f59cc4);border:2.5px solid #fff;box-shadow:0 0 0 2px var(--pink),0 5px 0 #d1709f;color:#5a2745}
+h1{font-weight:700;letter-spacing:1px;line-height:1;color:var(--pink);font-size:clamp(44px,12vw,72px);text-shadow:3px 3px 0 #fff,-3px 3px 0 #fff,3px -3px 0 #fff,-3px -3px 0 #fff,0 7px 0 var(--lav)}
+.hero p{color:#7a6aa8;font-size:17px}
+.spark{font-size:26px;letter-spacing:.7em;color:var(--pink);animation:tw 3s ease-in-out infinite}
+@keyframes tw{50%{opacity:.5;transform:scale(.94)}}
+.sec{color:var(--ink);font-size:34px;font-weight:700}
+.lcd{background:var(--butter);color:var(--ink);text-shadow:none;border-top:2px dashed #f4b6d0;font-size:23px}
+.oc .lcd{border:2px dashed #f4b6d0;border-radius:14px}
+.lr b{color:var(--pink);font-weight:700;opacity:1}
+.lr{animation:rise .6s both;animation-delay:calc(var(--i) * .12s)}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.how div{border:2.5px solid #fff;box-shadow:0 0 0 2px var(--line);background:#fffdfb;border-radius:18px}
+.prog{border:2px solid var(--line);background:#fff}
+.prog i{background:repeating-linear-gradient(90deg,#f19ac0 0 8px,#f9cfe2 8px 10px)}
+.pic{background:#f3eefc;border-bottom:2px dashed var(--line);color:#a898d4}
+.price{color:#d6679a;font-size:28px;font-weight:700}
+.step button{background:#fff;border:2px solid var(--line);color:var(--pink)}
+.info p,.note,.empty{color:#7a6aa8}
+.dock,.bulk{background:rgba(255,253,251,.92);backdrop-filter:blur(6px);border-top:3px solid #fff;box-shadow:0 -4px 18px rgba(120,100,180,.2);font-size:24px;font-weight:700}
+.start{background:var(--pink2);border:2px solid #fff;box-shadow:0 0 0 2px var(--pink)}
+#clock{display:none}
+input,select,textarea{border:2.5px solid var(--line);border-radius:14px;background:#fff;color:var(--ink)}
+:focus-visible{outline:3px solid var(--pink)!important;outline-offset:2px}
+.sum,.sum2,.items{border-color:var(--line);background:#fff}
+.qris{border:2.5px solid var(--line);border-radius:16px}
+summary::before{color:var(--pink)}details{border-top:2px dashed var(--line)}details p{color:#7a6aa8}
+.cek a,a.back{color:#d6679a}
+.steps li{border-color:#e4daf5;color:#a99bd1;border-radius:14px}
+.steps li.done{color:var(--ink);border-color:var(--line)}.steps li.done::before{color:var(--pink)}
+.steps li.now{background:var(--pink2);color:#5a2745;border-color:var(--pink);text-shadow:none}
+.stats{background:#ece6fa;color:var(--ink);text-shadow:none}
+.badge{background:var(--pink2);color:#5a2745}
+.ord,.rk{border:2.5px solid var(--line);border-radius:18px}
+.rk.on{background:var(--pink2);color:#5a2745;border-color:var(--pink)}
+.tag{background:#fff6cf;border-color:#e9c95b}
+@media(pointer:fine){body{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cpath d='M13 2l3.1 7 7.4.7-5.6 4.9 1.7 7.3L13 18l-6.6 3.9 1.7-7.3L2.5 9.7l7.4-.7z' fill='%23f6a6c9' stroke='%23fff' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E") 13 13,auto}.btn,button,summary,label,input{cursor:pointer}}
+.fth{width:18px;height:18px;border-radius:0;box-shadow:none;background:#fff;opacity:.9;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.fth[data-c="0"]{background:#f9b6d3}.fth[data-c="2"]{background:#fff3b0}.fth[data-c="3"]{background:#cbbcf2}
+@media(max-width:560px){dialog{border-radius:22px 22px 0 0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="win" aria-label="Selamat datang">
+    <div class="bar"><i></i><i></i><i></i><span>ineffable design ✦</span></div>
+    <div class="hero">
+      <div class="spark" aria-hidden="true"><span>✦</span><span>♡</span><span>✧</span></div>
+      <h1>INEFFABLE DESIGN</h1>
+      <p>Pre-order dibuka. Pilih, bayar pakai QRIS, selesai.</p>
+    </div>
+    <div class="lcd" aria-label="Jadwal pre-order">
+      <div class="lr" style="--i:0"><b>PO BUKA</b><span id="poBuka">Segera diumumkan</span></div>
+      <div class="lr" style="--i:1"><b>PO TUTUP</b><span id="poTutup">Segera diumumkan</span></div>
+      <div class="lr" style="--i:2"><b>PELUNASAN</b><span>CO di Shopee</span></div>
+      <div class="lr" style="--i:3"><b>KIRIM</b><span>Lewat Shopee</span></div>
+    </div>
+  </section>
+
+  <div class="how">
+    <div><span class="prog"><i style="width:33%"></i></span><b>1. Pilih produk</b><small>Atur jumlahnya pakai tombol + dan −.</small></div>
+    <div><span class="prog"><i style="width:66%"></i></span><b>2. Bayar QRIS</b><small>Upload bukti bayar, boleh DP atau penuh.</small></div>
+    <div><span class="prog"><i style="width:100%"></i></span><b>3. Pelunasan</b><small>Checkout sisanya di Shopee, kirim juga lewat sana.</small></div>
+  </div>
+
+  <h2 class="sec">Pilih produk</h2>
+  <div class="grid" id="grid"></div>
+
+  <section class="win" style="margin-top:22px">
+    <div class="bar"><i></i><i></i><i></i><span>baca dulu ♡</span></div>
+    <details><summary>PO tutup kapan?</summary><p>Tanggalnya ada di panel jadwal paling atas.</p></details>
+    <details><summary>Harus bayar penuh?</summary><p>Nggak. Boleh DP atau bayar penuh, sisanya dilunasi lewat Shopee.</p></details>
+    <details><summary>Kirimnya gimana?</summary><p>Lewat Shopee. Alamat kamu isi pas checkout pelunasan di sana, jadi di sini nggak perlu.</p></details>
+    <details><summary>Gimana cek status order?</summary><p>Buka halaman Cek Order, lalu masukin email yang kamu pakai buat order.</p></details>
+  </section>
+
+  <p class="cek">Sudah order? <a href="cek.html">Cek status orderanmu di sini</a></p>
+</div>
+
+<div class="dock">
+  <span class="start">✦ ineffable</span>
+  <span id="dockInfo">Keranjang kosong</span>
+  <button class="btn go" id="openCo" disabled>Checkout</button>
+  <span id="clock" aria-hidden="true"></span>
+</div>
+
+<dialog id="co">
+  <div class="bar"><i></i><i></i><i></i><span>checkout ♡</span></div>
+  <div class="body">
+    <div class="sum" id="sum"></div>
+    <label>Nama<input id="f_nama" autocomplete="name" required></label>
+    <label>Username IG / LINE<input id="f_kontak" required></label>
+    <label>Email<input id="f_email" type="email" autocomplete="email" required></label>
+    <div class="qris" id="qrisBox"><img src="images/qris.png" alt="Kode QRIS" onerror="this.parentNode.textContent='Taruh gambar QRIS di images/qris.png'"></div>
+    <label>Nominal yang kamu bayar (Rp)<input id="f_bayar" type="number" inputmode="numeric" min="0" required></label>
+    <label>Upload bukti bayar<input id="f_bukti" type="file" accept="image/*" required></label>
+    <p class="note">Boleh bayar penuh atau DP. Pelunasan dan pengiriman lewat Shopee.</p>
+    <div class="row"><button class="btn" id="closeCo" type="button">Batal</button><button class="btn go" id="send" type="button">Kirim order</button></div>
+    <p class="note" id="msg" role="status"></p>
+  </div>
+</dialog>
+
+<script src="products.js"></script>
+<script>
+const PRODS=typeof PRODUCTS!=="undefined"?PRODUCTS:[];
+const rp=n=>"Rp "+n.toLocaleString("id-ID");
+const cart={};
+const $=id=>document.getElementById(id);
+
+
+const PO_=typeof PO!=="undefined"?PO:{};
+const t0=PO_.buka?new Date(PO_.buka):null,t1=PO_.tutup?new Date(PO_.tutup):null;
+const fmt=d=>d.toLocaleString("id-ID",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit",timeZone:"Asia/Jakarta"}).replace(",", " ·").replace(/(\d{2})\.(\d{2})$/,"$1:$2")+" WIB";
+const poState=()=>{const n=Date.now();return t0&&n<t0?"belum":t1&&n>t1?"tutup":"buka"};
+if(t0)$("poBuka").textContent=fmt(t0);if(t1)$("poTutup").textContent=fmt(t1);
+function render(){
+  if(!PRODS.length){$("grid").innerHTML='<p class="note">Produk belum bisa dimuat. Pastikan file products.js ada di folder yang sama dengan index.html.</p>';return}
+  $("grid").innerHTML=PRODS.map(p=>`
+  <article class="win"><div class="pic"><img src="${p.img}" alt="${p.name}" onerror="this.remove()"><span>no image</span></div>
+  <div class="info"><h3>${p.name}</h3><p>${p.desc}</p>
+  <div class="row"><span class="price">${rp(p.price)}</span>
+  <div class="step"><button aria-label="Kurangi ${p.name}" data-d="-1" data-id="${p.id}">−</button><output id="q_${p.id}">0</output><button aria-label="Tambah ${p.name}" data-d="1" data-id="${p.id}">+</button></div></div></div></article>`).join("");
+}
+render();
+$("grid").addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b||poState()!=="buka")return;
+  const id=b.dataset.id;cart[id]=Math.max(0,(cart[id]||0)+Number(b.dataset.d));
+  $("q_"+id).textContent=cart[id];update();
+});
+const items=()=>PRODS.filter(p=>cart[p.id]>0).map(p=>({id:p.id,name:p.name,price:p.price,qty:cart[p.id]}));
+const total=()=>items().reduce((s,i)=>s+i.price*i.qty,0);
+function update(){
+  const n=items().reduce((s,i)=>s+i.qty,0);
+  const st=poState();
+  $("dockInfo").textContent=st==="belum"?"PO belum dibuka":st==="tutup"?"PO sudah ditutup":n?`${n} item · ${rp(total())}`:"Keranjang kosong";
+  $("openCo").disabled=!n||st!=="buka";
+}
+$("openCo").onclick=()=>{
+  $("sum").innerHTML=items().map(i=>`<div><span>${i.name} ×${i.qty}</span><span>${rp(i.price*i.qty)}</span></div>`).join("")+`<div><b>Total</b><b>${rp(total())}</b></div>`;
+  $("msg").textContent="";$("co").showModal();
+};
+$("closeCo").onclick=()=>$("co").close();
+
+// kompres foto bukti di browser (maks 1200px, JPEG)
+function compress(file){
+  return new Promise((res,rej)=>{
+    const img=new Image();img.onload=()=>{
+      const k=Math.min(1,1200/Math.max(img.width,img.height));
+      const c=document.createElement("canvas");c.width=img.width*k;c.height=img.height*k;
+      c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+      c.toBlob(b=>res(b),"image/jpeg",.8);
+    };img.onerror=rej;img.src=URL.createObjectURL(file);
+  });
+}
+
+$("send").onclick=async()=>{
+  if(poState()!=="buka"){$("msg").textContent="Maaf, PO lagi nggak dibuka.";return}
+  const nama=$("f_nama").value.trim(),kontak=$("f_kontak").value.trim(),email=$("f_email").value.trim(),bayar=Number($("f_bayar").value),file=$("f_bukti").files[0];
+  if(!nama||!kontak||!/\S+@\S+\.\S+/.test(email)||!bayar||!file){$("msg").textContent="Lengkapi semua kolom dulu ya, termasuk bukti bayar.";return;}
+  $("send").disabled=true;$("msg").textContent="Mengirim…";
+  try{
+    const bukti=await compress(file);
+    const payload={nama,kontak,email,items:items(),total:total(),nominal_bayar:bayar};
+    // TODO 1: kirim `bukti` ke Apps Script (Drive) -> dapat bukti_url
+    // TODO 2: insert `payload` + bukti_url ke Supabase (RPC create_order) -> dapat nomor order
+    console.log(payload,bukti);
+    $("msg").textContent="Order masuk! Cek statusnya kapan aja di halaman Cek Order pakai emailmu. (mode demo, belum tersambung ke database)";
+  }catch(err){$("msg").textContent="Gagal mengirim. Coba lagi ya.";}
+  $("send").disabled=false;
+};
+
+update();setInterval(update,30000);
+// jam taskbar
+(function(){const c=$("clock");const t=()=>{c.textContent=new Date().toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"}).replace(".",":")};t();setInterval(t,30000)})();
+// bulu jatuh
+(function(){for(let i=0;i<7;i++){const f=document.createElement("span");f.className="fth";f.dataset.c=i%4;
+ f.style.cssText=`left:${5+i*14}%;--d:${16+i*3}s;--w:-${i*4}s;--r:${(i%2?1:-1)*(20+i*8)}deg;--x:${(i%2?1:-1)*40}px`;document.body.appendChild(f)}})();
+</script>
+</body>
+</html>
